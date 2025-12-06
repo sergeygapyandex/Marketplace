@@ -39,7 +39,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -139,11 +141,20 @@ fun ProductCard(
     onClick: () -> Unit,
     onAddToCart: () -> Unit
 ) {
+    val actionDescription = stringResource(R.string.add_product_to_cart, product.name)
     Card(
         modifier = modifier
             .fillMaxWidth()
             .semantics {
-                //
+                customActions = listOf(
+                    CustomAccessibilityAction(
+                        label = actionDescription,
+                        action = {
+                            onAddToCart()
+                            true
+                        }
+                    )
+                )
             }
     ) {
         Column {
@@ -183,7 +194,6 @@ fun ProductCard(
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }
-                val actionDescription = stringResource(R.string.add_product_to_cart, product.name)
                 Icon(
                     Icons.Default.ShoppingCart,
                     contentDescription = stringResource(R.string.add_to_cart),
