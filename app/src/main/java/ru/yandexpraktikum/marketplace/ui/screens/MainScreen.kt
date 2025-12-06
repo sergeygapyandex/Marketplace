@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,7 @@ fun MainScreen(onProductClick: (Int) -> Unit) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            //val searchBarDescription = stringResource(R.string.searchbar_description)
+            val searchBarDescription = stringResource(R.string.searchbar_description)
             SearchBar(
                 query = searchQuery,
                 onQueryChange = { searchQuery = it },
@@ -93,6 +94,9 @@ fun MainScreen(onProductClick: (Int) -> Unit) {
                 },
                 placeholder = {
                     Text(
+                        modifier = Modifier.semantics {
+                            contentDescription = searchBarDescription
+                        },
                         text = stringResource(R.string.search_products),
                         color = Color(0xFFAAAAAA)
                     )
@@ -150,7 +154,7 @@ fun ProductCard(
             ) {
                 AsyncImage(
                     model = product.imageUrl,
-                    contentDescription = null,
+                    contentDescription = product.description,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(150.dp),
@@ -183,13 +187,15 @@ fun ProductCard(
                         color = Color(0xFFAAAAAA)
                     )
                 }
-                //val actionDescription = stringResource(R.string.add_product_to_cart, product.name)
+                val actionDescription = stringResource(R.string.add_product_to_cart, product.name)
                 Icon(
                     Icons.Default.ShoppingCart,
                     contentDescription = stringResource(R.string.add_to_cart),
                     tint = Color(0xFFAAAAAA),
                     modifier = Modifier
-                        .clickable {
+                        .clickable(
+                            onClickLabel = actionDescription,
+                        ) {
                             onAddToCart()
                         }
                         .minimumInteractiveComponentSize()
